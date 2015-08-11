@@ -27,9 +27,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 
 /**
@@ -63,8 +61,7 @@ public class ArticleFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            FetchArticleTask articleTask = new FetchArticleTask();
-            articleTask.execute();
+            updateArticle();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -73,16 +70,7 @@ public class ArticleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        String[] data = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-                "Sun 6/29 - Sunny - 20/7"
-        };
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(data));
+
 
 
         // Now that we have some dummy forecast data, create an ArrayAdapter.
@@ -92,7 +80,7 @@ public class ArticleFragment extends Fragment {
                 getActivity(), // The current context (this activity)
                 R.layout.list_item_article, // The name of the layout ID.
                 R.id.list_item_article_textview, // The ID of the textview to populate.
-                weekForecast);
+                new ArrayList<String>());
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_article);
@@ -109,6 +97,18 @@ public class ArticleFragment extends Fragment {
             }
         });
         return rootView;
+    }
+
+    public void updateArticle(){
+        FetchArticleTask articleTask = new FetchArticleTask();
+        articleTask.execute();
+
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        updateArticle();
     }
 
     public class FetchArticleTask extends AsyncTask<String, Void, String[]> {
