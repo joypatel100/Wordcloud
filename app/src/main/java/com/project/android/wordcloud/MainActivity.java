@@ -1,14 +1,9 @@
 package com.project.android.wordcloud;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import android.app.DialogFragment;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -22,6 +17,8 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.container,new ArticleFragment())
                     .commit();
         }
+
+
     }
 
 
@@ -43,31 +40,9 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-        if (id == R.id.search_bar)
-        {
-            showDialog();
-        }
 
         return super.onOptionsItemSelected(item);
     }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    void showDialog() {
-        DialogFragment newFragment = SearchDialogFragment.newInstance(
-                R.string.alert_dialog_two_buttons_title);
-        newFragment.show(getFragmentManager(), "dialog");
-    }
-
-    public void doPositiveClick() {
-        // Do stuff here.
-        Log.i("FragmentAlertDialog", "Positive click!");
-    }
-
-    public void doNegativeClick() {
-        // Do stuff here.
-        Log.i("FragmentAlertDialog", "Negative click!");
-    }
-
 
 
 }

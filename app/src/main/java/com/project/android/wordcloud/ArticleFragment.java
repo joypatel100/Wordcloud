@@ -117,11 +117,6 @@ public class ArticleFragment extends Fragment {
 
         private String[] getInformationFromJson(String articleJsonStr, int numArticles)
                 throws JSONException{
-<<<<<<< Updated upstream
-=======
-            final String RESULTS = "results";
-            final String TITLE = "title";
->>>>>>> Stashed changes
 
             final String RESULTS = "results";
             final String TITLE = "title";
@@ -135,16 +130,12 @@ public class ArticleFragment extends Fragment {
             while(numArticles != ind_res){
                 JSONObject article = articleArray.getJSONObject(ind_json);
                 if(article.has(TITLE)){
-<<<<<<< Updated upstream
                     String title = article.getString(TITLE);
                     String url = article.getString(ARTICLE_URL);
                     resultStrs[ind_res] = title;
                     mArticleURL.put(title, url);
 
 
-=======
-                    resultStrs[ind_res] = article.getString(TITLE);
->>>>>>> Stashed changes
                     ind_res++;
                 }
 
