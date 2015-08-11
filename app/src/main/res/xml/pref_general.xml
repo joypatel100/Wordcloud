@@ -6,11 +6,20 @@
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
     <ListPreference
-        android:key="example_list"
-        android:title="@string/pref_title_add_friends_to_messages"
-        android:defaultValue="-1"
-        android:entries="@array/pref_example_list_titles"
-        android:entryValues="@array/pref_example_list_values"
+        android:key="language_list"
+        android:title="@string/pref_title_article_language"
+        android:defaultValue="en"
+        android:entries="@array/pref_language_list_titles"
+        android:entryValues="@array/pref_language_list_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <ListPreference
+        android:key="article_num"
+        android:title="@string/pref_num_articles"
+        android:defaultValue="25"
+        android:entries="@array/pref_num_articles_titles"
+        android:entryValues="@array/pref_num_articles_values"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
