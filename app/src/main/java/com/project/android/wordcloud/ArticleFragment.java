@@ -1,5 +1,6 @@
 package com.project.android.wordcloud;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -90,6 +92,16 @@ public class ArticleFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_article);
         listView.setAdapter(mArticleAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                String article = mArticleAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), WordCloudActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, article);
+                startActivity(intent);
+            }
+        });
         return rootView;
     }
 
