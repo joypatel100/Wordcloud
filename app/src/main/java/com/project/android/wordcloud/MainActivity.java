@@ -13,13 +13,16 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
+    public ArticleFragment myAF;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if(savedInstanceState == null){
+            myAF = new ArticleFragment();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container,new ArticleFragment())
+                    .add(R.id.container,myAF)
                     .commit();
         }
 
@@ -64,9 +67,10 @@ public class MainActivity extends AppCompatActivity {
         newFragment.show(getFragmentManager(), "dialog");
     }
 
-    public void doPositiveClick() {
+    public void doPositiveClick(String input) {
         // Do stuff here.
         Log.i("FragmentAlertDialog", "Positive click!");
+        myAF.updateArticle(input);
     }
 
     public void doNegativeClick() {

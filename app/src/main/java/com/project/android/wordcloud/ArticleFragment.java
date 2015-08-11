@@ -62,7 +62,7 @@ public class ArticleFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            updateArticle();
+            updateArticle("");
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -100,16 +100,16 @@ public class ArticleFragment extends Fragment {
         return rootView;
     }
 
-    public void updateArticle(){
+    public void updateArticle(String input){
         FetchArticleTask articleTask = new FetchArticleTask();
-        articleTask.execute();
+        articleTask.execute(input);
 
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        updateArticle();
+        updateArticle("");
     }
 
     public class FetchArticleTask extends AsyncTask<String, Void, String[]> {
@@ -158,7 +158,7 @@ public class ArticleFragment extends Fragment {
             String articleJsonStr = null;
 
             String key = "8np7pfcewGev6KGJuUcef-1CAC4_";
-            String search = "";
+            String search = params[0];
             String source = "news";
             String format = "json";
 
