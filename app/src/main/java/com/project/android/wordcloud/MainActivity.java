@@ -10,10 +10,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+
 
 public class MainActivity extends AppCompatActivity {
 
     public ArticleFragment myAF;
+    public static HashSet<String> badWords;
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +33,30 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.container,myAF)
                     .commit();
         }
+
+        badWords = new HashSet<>();
+        try {
+            InputStream is = getResources().openRawResource(R.raw.badwords);
+            InputStreamReader inputStreamReader = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(inputStreamReader);
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                badWords.add(line.toLowerCase());
+            }
+            br.close();
+            is.close();
+            inputStreamReader.close();
+        }catch (IOException e) {
+            //You'll need to add proper error handling here
+            Log.v(LOG_TAG,"didn't load bad words");
+        }
+
+
+
+
+
+
 
     }
 

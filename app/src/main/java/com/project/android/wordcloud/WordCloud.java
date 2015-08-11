@@ -15,11 +15,19 @@ public class WordCloud {
     public HashMap<String,double[]> myWC;
 
     public WordCloud(String text){
+        String[] allWords = text.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");
+        StringBuilder sb = new StringBuilder();
+        for(String word: allWords){
+            if(MainActivity.badWords.contains(word)){
+                continue;
+            }
+            sb.append(word + " ");
+        }
         Cloud cloud = new Cloud();
         cloud.setMaxWeight(3);
         cloud.setMaxTagsToDisplay(50);
         cloud.setTagCase(Cloud.Case.UPPER);
-        cloud.addText(text);
+        cloud.addText(sb.toString());
         int ind = 0;
         myWC = new HashMap<>();
         for(Tag tag: cloud.tags()){
