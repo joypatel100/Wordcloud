@@ -68,9 +68,9 @@ public class WordCloudActivity extends AppCompatActivity {
             Intent intent = getActivity().getIntent();
             if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
                 //String articleStr = intent.getStringExtra(Intent.EXTRA_TEXT);
-                StringBuilder articleStr = new StringBuilder("Hi, my name is Joy Patel." +
-                        "I am an undergraduate." +
-                        "I love math and computer science." +
+                StringBuilder articleStr = new StringBuilder("Hi, my name is Joy Patel. " +
+                        "I am an undergraduate. " +
+                        "I love math and computer science. " +
                         "Specifically, I enjoy data analytics. Hi Hi Hi");
 
                 WordCloud wc = new WordCloud(articleStr.toString());
