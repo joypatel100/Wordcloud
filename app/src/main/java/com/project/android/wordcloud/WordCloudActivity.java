@@ -2,17 +2,26 @@ package com.project.android.wordcloud;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
+
+import java.io.IOException;
 
 /**
  * Created by Joy on 8/11/15.
@@ -56,6 +65,7 @@ public class WordCloudActivity extends AppCompatActivity {
      * A placeholder fragment containing a simple view.
      */
     public static class WordCloudFragment extends Fragment {
+        private final String LOG_TAG = WordCloudFragment.class.getSimpleName();
 
         public WordCloudFragment() {
         }
@@ -68,10 +78,32 @@ public class WordCloudActivity extends AppCompatActivity {
             Intent intent = getActivity().getIntent();
             if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
                 //String articleStr = intent.getStringExtra(Intent.EXTRA_TEXT);
-                StringBuilder articleStr = new StringBuilder("Hi, my name is Joy Patel. " +
+                /*StringBuilder articleStr = new StringBuilder("Hi, my name is Joy Patel. " +
                         "I am an undergraduate. " +
                         "I love math and computer science. " +
-                        "Specifically, I enjoy data analytics. Hi Hi Hi");
+                        "Specifically, I enjoy data analytics. Hi Hi Hi");*/
+                StringBuilder articleStr = new StringBuilder();
+                String articleURL = intent.getStringExtra(Intent.EXTRA_TEXT);
+
+                try {
+
+                    // need http protocol
+                    //Document doc = Jsoup.connect("http://fr.news.yahoo.com/france-foot-pro-vote-gr%C3%A8ve-fin-novembre-contre-125358890.html").get();
+                    Log.v(LOG_TAG, articleURL);
+                    if (android.os.Build.VERSION.SDK_INT >= 10) {
+                        StrictMode.ThreadPolicy tp = StrictMode.ThreadPolicy.LAX; StrictMode.setThreadPolicy(tp);
+                    }
+                    Document doc = Jsoup.connect(articleURL).ignoreContentType(true).get();
+
+                    for (Element el : doc.select("body").select("*")) {
+                        for (TextNode node : el.textNodes()) {
+                            articleStr.append(node.text());
+                        }
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 WordCloud wc = new WordCloud(articleStr.toString());
                 Spannable span = new SpannableString(wc.words());

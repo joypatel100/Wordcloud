@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -36,7 +37,11 @@ import java.util.List;
  */
 public class ArticleFragment extends Fragment {
     ArrayAdapter<String> mArticleAdapter;
+    HashMap<String,String> mArticleURL;
+    private final String LOG_TAG = ArticleFragment.class.getSimpleName();
+
     public ArticleFragment() {
+        mArticleURL = new HashMap<>();
     }
 
     @Override
@@ -98,7 +103,8 @@ public class ArticleFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String article = mArticleAdapter.getItem(position);
                 Intent intent = new Intent(getActivity(), WordCloudActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, article);
+                        .putExtra(Intent.EXTRA_TEXT, mArticleURL.get(article));
+                Log.v(LOG_TAG,mArticleURL.get(article));
                 startActivity(intent);
             }
         });
@@ -111,9 +117,10 @@ public class ArticleFragment extends Fragment {
 
         private String[] getInformationFromJson(String articleJsonStr, int numArticles)
                 throws JSONException{
-            final String RESULTS = "results";
-            final String SOURCE_URL = "title";
 
+            final String RESULTS = "results";
+            final String TITLE = "title";
+            final String ARTICLE_URL = "url";
             JSONObject articleJson = new JSONObject(articleJsonStr);
             JSONArray articleArray = articleJson.getJSONArray(RESULTS);
 
@@ -122,8 +129,13 @@ public class ArticleFragment extends Fragment {
             int ind_json = 0;
             while(numArticles != ind_res){
                 JSONObject article = articleArray.getJSONObject(ind_json);
-                if(article.has(SOURCE_URL)){
-                    resultStrs[ind_res] = article.getString(SOURCE_URL);
+                if(article.has(TITLE)){
+                    String title = article.getString(TITLE);
+                    String url = article.getString(ARTICLE_URL);
+                    resultStrs[ind_res] = title;
+                    mArticleURL.put(title, url);
+
+
                     ind_res++;
                 }
 

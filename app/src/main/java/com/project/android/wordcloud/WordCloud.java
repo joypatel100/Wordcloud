@@ -17,7 +17,7 @@ public class WordCloud {
     public WordCloud(String text){
         Cloud cloud = new Cloud();
         cloud.setMaxWeight(3);
-        cloud.setMaxTagsToDisplay(10);
+        cloud.setMaxTagsToDisplay(50);
         cloud.setTagCase(Cloud.Case.UPPER);
         cloud.addText(text);
         int ind = 0;
