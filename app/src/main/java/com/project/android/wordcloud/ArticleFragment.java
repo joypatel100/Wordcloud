@@ -36,7 +36,7 @@ import java.util.HashMap;
 public class ArticleFragment extends Fragment {
     ArrayAdapter<String> mArticleAdapter;
     HashMap<String,String> mArticleURL;
-    String test = "hello";
+    
     private final String LOG_TAG = ArticleFragment.class.getSimpleName();
 
     public ArticleFragment() {
