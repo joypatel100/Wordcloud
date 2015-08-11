@@ -1,22 +1,24 @@
 package com.project.android.wordcloud;
 
 import android.annotation.TargetApi;
-import android.app.Dialog;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 
 public class SearchDialogFragment extends DialogFragment {
+
+
+    private final String LOG_TAG = DialogFragment.class.getSimpleName();
+
+
+
     public static SearchDialogFragment newInstance(int title) {
         SearchDialogFragment frag = new SearchDialogFragment();
         Bundle args = new Bundle();
