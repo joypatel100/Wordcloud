@@ -111,38 +111,26 @@ public class ArticleFragment extends Fragment {
 
         private String[] getInformationFromJson(String articleJsonStr, int numArticles)
                 throws JSONException{
-            final String RESPONSE_DATA = "responseData";
             final String RESULTS = "results";
-            final String RELATED_STORIES = "relatedStories";
-            final String UNESCAPED_URL = "unescapedUrl";
+            final String SOURCE_URL = "title";
 
             JSONObject articleJson = new JSONObject(articleJsonStr);
-            JSONArray articleArray = articleJson.getJSONObject(RESPONSE_DATA).getJSONArray(RESULTS);
+            JSONArray articleArray = articleJson.getJSONArray(RESULTS);
 
             String[] resultStrs = new String[numArticles];
             int ind_res = 0;
             int ind_json = 0;
             while(numArticles != ind_res){
                 JSONObject article = articleArray.getJSONObject(ind_json);
-                if(article.has(UNESCAPED_URL)){
-                    resultStrs[ind_res] = article.getString(UNESCAPED_URL);
+                if(article.has(SOURCE_URL)){
+                    resultStrs[ind_res] = article.getString(SOURCE_URL);
                     ind_res++;
-                }
-                else if(article.has(RELATED_STORIES)){
-                    JSONArray relatedArray = article.getJSONArray(RELATED_STORIES);
-                    for(int j = 0; j < relatedArray.length(); j++){
-                        resultStrs[ind_res] = relatedArray.getJSONObject(j).getString(UNESCAPED_URL);
-                        ind_res++;
-                    }
                 }
 
                 ind_json++;
             }
 
             return resultStrs;
-
-
-
         }
 
         @Override
@@ -156,23 +144,31 @@ public class ArticleFragment extends Fragment {
             BufferedReader reader = null;
             String articleJsonStr = null;
 
+            String key = "8np7pfcewGev6KGJuUcef-1CAC4_";
+            String search = "";
+            String source = "news";
             String format = "json";
-            int numArticles = 7;
+
+            int numArticles = 10;
 
             try{
-                final String ARTICLE_BASE_URL = "https://ajax.googleapis.com/ajax/services/search/news?";
-                final String QUERY_PARAM = "q";
-                final String V_PARAM = "v";
-                final String RSZ_PARAM = "rsz";
+                final String ARTICLE_BASE_URL = "http://www.faroo.com/api?start=1&length=10&l=en";
+                final String SEARCH_PARAM = "q";
+                final String SOURCE_PARAM = "src";
+                final String FORMAT_PARAM = "f";
+                final String KEY_PARAM = "key";
 
-                //URL url = new URL("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=michael%20jordan&rsz=1");
+
+                //URL url = new URL("http://www.faroo.com/api?q=&start=1&length=10&l=en&src=news&f=json&key=8np7pfcewGev6KGJuUcef-1CAC4_");
                 Uri builtUri = Uri.parse(ARTICLE_BASE_URL).buildUpon()
-                                .appendQueryParameter(V_PARAM,"1.0")
-                                .appendQueryParameter(QUERY_PARAM,"joy")
-                                .appendQueryParameter(RSZ_PARAM,"8")
-                                .build();
+                        .appendQueryParameter(SEARCH_PARAM, search)
+                        .appendQueryParameter(SOURCE_PARAM, source)
+                        .appendQueryParameter(FORMAT_PARAM, format)
+                        .appendQueryParameter(KEY_PARAM, key)
+                        .build();
                 URL url = new URL(builtUri.toString());
 
+                Log.v ("USER_AGENT", System.getProperty("http.agent")); //Dalvik/2.1.0
                 Log.v(LOG_TAG, "Built URI " + builtUri.toString());
 
                 urlConnection = (HttpURLConnection) url.openConnection();
