@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String ARTICLE_FRAGMENT = "ArticleFragment";
 
+    boolean mTwoPane;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,9 +33,14 @@ public class MainActivity extends AppCompatActivity {
         //myAF = (ArticleFragment) fm.findFragmentByTag(ARTICLE_FRAGMENT);
         myAF = new ArticleFragment();
         myAF.setRetainInstance(true);
+
+        if (findViewById(R.id.weather_detail_container) != null) {
+            mTwoPane = true;
+        }
+
         if(savedInstanceState == null){
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container,myAF)
+                    .add(R.id.weather_detail_container,myAF)
                     .commit();
         }
 
