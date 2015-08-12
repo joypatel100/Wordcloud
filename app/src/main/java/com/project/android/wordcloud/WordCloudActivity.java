@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -114,6 +116,11 @@ public class WordCloudActivity extends AppCompatActivity {
                 }
                 ((TextView) rootView.findViewById(R.id.wordcloud_text))
                         .setText(span);
+                TextView link = (TextView) rootView.findViewById(R.id.wordcloud_link);
+                link.setClickable(true);
+                link.setMovementMethod(LinkMovementMethod.getInstance());
+                String hyperlink = "<a href=\"" + articleURL + "\"> Article Link </a>";
+                link.setText(Html.fromHtml(hyperlink));
             }
 
             return rootView;

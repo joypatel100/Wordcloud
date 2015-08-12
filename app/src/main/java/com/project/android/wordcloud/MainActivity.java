@@ -22,42 +22,39 @@ public class MainActivity extends AppCompatActivity {
     public ArticleFragment myAF;
     public static HashSet<String> badWords;
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String ARTICLE_FRAGMENT = "ArticleFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //myAF = (ArticleFragment) fm.findFragmentByTag(ARTICLE_FRAGMENT);
+        myAF = new ArticleFragment();
         if(savedInstanceState == null){
-            myAF = new ArticleFragment();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container,myAF)
                     .commit();
         }
 
-        badWords = new HashSet<>();
-        try {
-            InputStream is = getResources().openRawResource(R.raw.badwords);
-            InputStreamReader inputStreamReader = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(inputStreamReader);
-            String line;
+        if(badWords==null) {
+            badWords = new HashSet<>();
+            try {
+                InputStream is = getResources().openRawResource(R.raw.badwords);
+                InputStreamReader inputStreamReader = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(inputStreamReader);
+                String line;
 
-            while ((line = br.readLine()) != null) {
-                badWords.add(line.toLowerCase());
+                while ((line = br.readLine()) != null) {
+                    badWords.add(line.toLowerCase());
+                }
+                br.close();
+                is.close();
+                inputStreamReader.close();
+            } catch (IOException e) {
+                //You'll need to add proper error handling here
+                Log.v(LOG_TAG, "didn't load bad words");
             }
-            br.close();
-            is.close();
-            inputStreamReader.close();
-        }catch (IOException e) {
-            //You'll need to add proper error handling here
-            Log.v(LOG_TAG,"didn't load bad words");
         }
-
-
-
-
-
-
-
     }
 
 
@@ -86,8 +83,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -101,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void doPositiveClick(String input) {
         // Do stuff here.
-        Log.i("FragmentAlertDialog", "Positive click!");
         myAF.updateArticle(input);
     }
 

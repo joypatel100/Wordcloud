@@ -49,7 +49,6 @@ public class SearchDialogFragment extends DialogFragment {
                                 ((MainActivity) getActivity()).doPositiveClick(input);
 
 
-
                             }
                         }
                 )

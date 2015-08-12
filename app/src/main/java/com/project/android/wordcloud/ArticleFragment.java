@@ -36,18 +36,54 @@ import java.util.HashMap;
 public class ArticleFragment extends Fragment {
     ArrayAdapter<String> mArticleAdapter;
     HashMap<String,String> mArticleURL;
+    public String lastSearch = "";
+    final String ARTICLE_ADAPTER = "mArticleAdapter";
+    final String ARTICLE_URL_KEYS = "mArticleURLKeys";
+    final String ARTICLE_URL_VALUES = "mArticleURLValues";
+    final String LAST_SEARCH = "lastSearch";
 
     private final String LOG_TAG = ArticleFragment.class.getSimpleName();
 
     public ArticleFragment() {
-        mArticleURL = new HashMap<>();
     }
+
+    /*
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ArrayList<String> adapterInfo = new ArrayList<>();
+        ArrayList<String> urlKeys = new ArrayList<>(mArticleURL.keySet());
+        ArrayList<String> urlValues = new ArrayList<>(mArticleURL.values());
+        for(int i = 0; i < mArticleURL.keySet().size(); i++){
+            adapterInfo.add(mArticleAdapter.getItem(i));
+        }
+        outState.putStringArrayList(ARTICLE_ADAPTER, adapterInfo);
+        outState.putStringArrayList(ARTICLE_URL_KEYS,urlKeys);
+        outState.putStringArrayList(ARTICLE_URL_VALUES, urlValues);
+        outState.putString(LAST_SEARCH, lastSearch);
+    }*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+        /*
+        if(savedInstanceState!=null){
+            Log.v(LOG_TAG,"ON CREATE ARTICLE FRAGMENT");
+            mArticleAdapter = new ArrayAdapter<String>(
+                    getActivity(), // The current context (this activity)
+                    R.layout.list_item_article, // The name of the layout ID.
+                    R.id.list_item_article_textview, // The ID of the textview to populate.
+                    savedInstanceState.getStringArrayList(ARTICLE_ADAPTER));
+            ArrayList<String> urlKeys = savedInstanceState.getStringArrayList(ARTICLE_URL_KEYS);
+            ArrayList<String> urlValues = savedInstanceState.getStringArrayList(ARTICLE_URL_VALUES);
+            mArticleURL = new HashMap<>();
+            for(int i = 0; i < urlKeys.size(); i++){
+                mArticleURL.put(urlKeys.get(i),urlValues.get(i));
+            }
+            lastSearch = savedInstanceState.getString(LAST_SEARCH);
+        }*/
     }
 
     @Override
@@ -62,7 +98,7 @@ public class ArticleFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            updateArticle("");
+            updateArticle(lastSearch);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -71,8 +107,6 @@ public class ArticleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
 
         // Now that we have some dummy forecast data, create an ArrayAdapter.
         // The ArrayAdapter will take data from a source (like our dummy forecast) and
@@ -93,7 +127,7 @@ public class ArticleFragment extends Fragment {
                 String article = mArticleAdapter.getItem(position);
                 Intent intent = new Intent(getActivity(), WordCloudActivity.class)
                         .putExtra(Intent.EXTRA_TEXT, mArticleURL.get(article));
-                Log.v(LOG_TAG,mArticleURL.get(article));
+                Log.v(LOG_TAG, mArticleURL.get(article));
                 startActivity(intent);
             }
         });
@@ -101,6 +135,8 @@ public class ArticleFragment extends Fragment {
     }
 
     public void updateArticle(String input){
+        lastSearch = input;
+        Log.v(LOG_TAG, input);
         FetchArticleTask articleTask = new FetchArticleTask();
         articleTask.execute(input);
 
@@ -109,7 +145,7 @@ public class ArticleFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        updateArticle("");
+        updateArticle(lastSearch);
     }
 
     public class FetchArticleTask extends AsyncTask<String, Void, String[]> {
@@ -128,6 +164,7 @@ public class ArticleFragment extends Fragment {
             String[] resultStrs = new String[numArticles];
             int ind_res = 0;
             int ind_json = 0;
+            mArticleURL = new HashMap<>();
             while(numArticles != ind_res){
                 JSONObject article = articleArray.getJSONObject(ind_json);
                 if(article.has(TITLE)){
