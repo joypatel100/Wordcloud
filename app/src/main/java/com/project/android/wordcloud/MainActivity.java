@@ -34,13 +34,13 @@ public class MainActivity extends AppCompatActivity {
         myAF = new ArticleFragment();
         myAF.setRetainInstance(true);
 
-        if (findViewById(R.id.weather_detail_container) != null) {
+        if (findViewById(R.id.article_detail_container) != null) {
             mTwoPane = true;
         }
 
         if(savedInstanceState == null){
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.weather_detail_container,myAF)
+                    .add(R.id.article_detail_container,myAF)
                     .commit();
         }
 

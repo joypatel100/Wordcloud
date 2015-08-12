@@ -36,7 +36,7 @@ public class WordCloudActivity extends AppCompatActivity {
         setContentView(R.layout.activity_wordcloud);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.weather_detail_container, new WordCloudFragment())
+                    .add(R.id.article_detail_container, new WordCloudFragment())
                     .commit();
         }
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
