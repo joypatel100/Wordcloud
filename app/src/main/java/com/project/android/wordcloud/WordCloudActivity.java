@@ -29,6 +29,7 @@ import java.io.IOException;
  * Created by Joy on 8/11/15.
  */
 public class WordCloudActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +39,7 @@ public class WordCloudActivity extends AppCompatActivity {
                     .add(R.id.container, new WordCloudFragment())
                     .commit();
         }
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -54,10 +56,12 @@ public class WordCloudActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case R.id.action_settings:
+                return  true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

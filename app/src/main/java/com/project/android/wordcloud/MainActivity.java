@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //myAF = (ArticleFragment) fm.findFragmentByTag(ARTICLE_FRAGMENT);
         myAF = new ArticleFragment();
+        myAF.setRetainInstance(true);
         if(savedInstanceState == null){
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container,myAF)
