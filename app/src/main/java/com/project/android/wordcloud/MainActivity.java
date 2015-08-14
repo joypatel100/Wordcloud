@@ -97,12 +97,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void doPositiveClick(String input) {
         // Do stuff here.
-        myAF.updateArticle(input);
+        myAF.updateArticle(input,myAF.lastLanguage);
     }
 
     public void doNegativeClick() {
         // Do stuff here.
         Log.i("FragmentAlertDialog", "Negative click!");
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        String language = Utility.getPreferredLanguage(this);
+        Log.v(LOG_TAG, language);
+        if(!language.equals(myAF.lastLanguage)) {
+            myAF.updateArticle(myAF.lastSearch, language);
+        }
+
     }
 
 }

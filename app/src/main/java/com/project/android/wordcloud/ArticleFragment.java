@@ -37,6 +37,7 @@ public class ArticleFragment extends Fragment {
     ArrayAdapter<String> mArticleAdapter;
     HashMap<String,String> mArticleURL;
     public String lastSearch = "";
+    public String lastLanguage = "en";
     final String ARTICLE_ADAPTER = "mArticleAdapter";
     final String ARTICLE_URL_KEYS = "mArticleURLKeys";
     final String ARTICLE_URL_VALUES = "mArticleURLValues";
@@ -47,43 +48,11 @@ public class ArticleFragment extends Fragment {
     public ArticleFragment() {
     }
 
-    /*
-    @Override
-    public void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        ArrayList<String> adapterInfo = new ArrayList<>();
-        ArrayList<String> urlKeys = new ArrayList<>(mArticleURL.keySet());
-        ArrayList<String> urlValues = new ArrayList<>(mArticleURL.values());
-        for(int i = 0; i < mArticleURL.keySet().size(); i++){
-            adapterInfo.add(mArticleAdapter.getItem(i));
-        }
-        outState.putStringArrayList(ARTICLE_ADAPTER, adapterInfo);
-        outState.putStringArrayList(ARTICLE_URL_KEYS,urlKeys);
-        outState.putStringArrayList(ARTICLE_URL_VALUES, urlValues);
-        outState.putString(LAST_SEARCH, lastSearch);
-    }*/
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
-        /*
-        if(savedInstanceState!=null){
-            Log.v(LOG_TAG,"ON CREATE ARTICLE FRAGMENT");
-            mArticleAdapter = new ArrayAdapter<String>(
-                    getActivity(), // The current context (this activity)
-                    R.layout.list_item_article, // The name of the layout ID.
-                    R.id.list_item_article_textview, // The ID of the textview to populate.
-                    savedInstanceState.getStringArrayList(ARTICLE_ADAPTER));
-            ArrayList<String> urlKeys = savedInstanceState.getStringArrayList(ARTICLE_URL_KEYS);
-            ArrayList<String> urlValues = savedInstanceState.getStringArrayList(ARTICLE_URL_VALUES);
-            mArticleURL = new HashMap<>();
-            for(int i = 0; i < urlKeys.size(); i++){
-                mArticleURL.put(urlKeys.get(i),urlValues.get(i));
-            }
-            lastSearch = savedInstanceState.getString(LAST_SEARCH);
-        }*/
     }
 
     @Override
@@ -98,7 +67,7 @@ public class ArticleFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            updateArticle(lastSearch);
+            updateArticle(lastSearch,lastLanguage);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -134,18 +103,19 @@ public class ArticleFragment extends Fragment {
         return rootView;
     }
 
-    public void updateArticle(String input){
-        lastSearch = input;
-        Log.v(LOG_TAG, input);
+    public void updateArticle(String search, String language ){
+        lastSearch = search;
+        lastLanguage = language;
+        Log.v(LOG_TAG, lastSearch);
         FetchArticleTask articleTask = new FetchArticleTask();
-        articleTask.execute(input);
+        articleTask.execute(lastSearch,lastLanguage);
 
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        updateArticle(lastSearch);
+        updateArticle(lastSearch,lastLanguage);
     }
 
     public class FetchArticleTask extends AsyncTask<String, Void, String[]> {
@@ -161,26 +131,24 @@ public class ArticleFragment extends Fragment {
             JSONObject articleJson = new JSONObject(articleJsonStr);
             JSONArray articleArray = articleJson.getJSONArray(RESULTS);
 
-            String[] resultStrs = new String[numArticles];
+            ArrayList<String> resultStrs = new ArrayList<>();
             int ind_res = 0;
             int ind_json = 0;
             mArticleURL = new HashMap<>();
             while(numArticles != ind_res){
+                Log.v(LOG_TAG,Integer.toString(ind_json));
                 JSONObject article = articleArray.getJSONObject(ind_json);
                 if(article.has(TITLE)){
                     String title = article.getString(TITLE);
                     String url = article.getString(ARTICLE_URL);
-                    resultStrs[ind_res] = title;
+                    resultStrs.add(title);
                     mArticleURL.put(title, url);
-
-
                     ind_res++;
                 }
-
                 ind_json++;
             }
 
-            return resultStrs;
+            return resultStrs.toArray(new String[resultStrs.size()]);
         }
 
         @Override
@@ -196,8 +164,9 @@ public class ArticleFragment extends Fragment {
 
             String key = "8np7pfcewGev6KGJuUcef-1CAC4_";
             String search = params[0];
-            String source = "news";
+            String source = "web";
             String format = "json";
+            String language = params[1];
 
             int numArticles = 10;
 
@@ -207,15 +176,18 @@ public class ArticleFragment extends Fragment {
                 final String SOURCE_PARAM = "src";
                 final String FORMAT_PARAM = "f";
                 final String KEY_PARAM = "key";
+                final String LANGUAGE_PARAM = "l";
 
 
                 //URL url = new URL("http://www.faroo.com/api?q=&start=1&length=10&l=en&src=news&f=json&key=8np7pfcewGev6KGJuUcef-1CAC4_");
                 Uri builtUri = Uri.parse(ARTICLE_BASE_URL).buildUpon()
                         .appendQueryParameter(SEARCH_PARAM, search)
+                        .appendQueryParameter(LANGUAGE_PARAM,language)
                         .appendQueryParameter(SOURCE_PARAM, source)
                         .appendQueryParameter(FORMAT_PARAM, format)
                         .appendQueryParameter(KEY_PARAM, key)
                         .build();
+
                 URL url = new URL(builtUri.toString());
 
                 Log.v ("USER_AGENT", System.getProperty("http.agent")); //Dalvik/2.1.0
@@ -279,6 +251,7 @@ public class ArticleFragment extends Fragment {
                 mArticleAdapter.clear();
                 for(String articleStr : result) {
                     mArticleAdapter.add(articleStr);
+                    Log.v(LOG_TAG,articleStr);
                 }
                 // New data is back from the server.  Hooray!
             }
