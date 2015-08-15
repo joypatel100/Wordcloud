@@ -40,6 +40,11 @@
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value="com.project.android.wordcloud.MainActivity" />
+        <provider
+            android:authorities="com.project.android.wordcloud"
+            android:name=".data.ArticleProvider"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

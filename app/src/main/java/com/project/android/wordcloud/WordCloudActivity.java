@@ -2,7 +2,6 @@ package com.project.android.wordcloud;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
@@ -10,20 +9,15 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.style.RelativeSizeSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.TextNode;
-
-import java.io.IOException;
+import com.project.android.wordcloud.data.ArticleContract;
 
 /**
  * Created by Joy on 8/11/15.
@@ -41,7 +35,6 @@ public class WordCloudActivity extends AppCompatActivity {
         }
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,51 +65,49 @@ public class WordCloudActivity extends AppCompatActivity {
      */
     public static class WordCloudFragment extends Fragment {
         private final String LOG_TAG = WordCloudFragment.class.getSimpleName();
+        private static final String ARTICLE_SHARE_HASHTAG = " #Wordcloud";
+        private ShareActionProvider mShareActionProvider;
+        private String mArticle;
+        private static final int WC_LOADER = 0;
+
+        private static final String[] ARTICLE_COLUMNS = {
+                ArticleContract.ArticleEntry.TABLE_NAME + "." + ArticleContract.ArticleEntry._ID,
+                ArticleContract.ArticleEntry.COLUMN_SEARCH_QUERY,
+                ArticleContract.ArticleEntry.COLUMN_DATE,
+                ArticleContract.ArticleEntry.COLUMN_ARTICLE_NAME,
+                ArticleContract.ArticleEntry.COLUMN_ARTICLE_URL,
+                ArticleContract.ArticleEntry.COLUMN_ARTICLE_WORDS
+        };
+
+        static final int COL_ARTICLE_ID = 0;
+        static final int COL_ARTICLE_SEARCH_QUERY = 1;
+        static final int COL_ARTICLE_DATE = 2;
+        static final int COL_ARTICLE_NAME = 3;
+        static final int COL_ARTICLE_URL = 4;
+        static final int COL_ARTICLE_WORDS = 5;
+
+        private View rootView;
 
         public WordCloudFragment() {
+            setHasOptionsMenu(true);
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-
             View rootView = inflater.inflate(R.layout.fragment_wordcloud, container, false);
             Intent intent = getActivity().getIntent();
-            if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-                //String articleStr = intent.getStringExtra(Intent.EXTRA_TEXT);
-                /*StringBuilder articleStr = new StringBuilder("Hi, my name is Joy Patel. " +
-                        "I am an undergraduate. " +
-                        "I love math and computer science. " +
-                        "Specifically, I enjoy data analytics. Hi Hi Hi");*/
-                StringBuilder articleStr = new StringBuilder();
-                String articleURL = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if (intent != null && intent.hasExtra("words")) {
+                //StringBuilder articleStr = new StringBuilder();
+                String articleURL = intent.getStringExtra("url");
+                String articleStr = intent.getStringExtra("words");
 
-                try {
-
-                    // need http protocol
-                    //Document doc = Jsoup.connect("http://fr.news.yahoo.com/france-foot-pro-vote-gr%C3%A8ve-fin-novembre-contre-125358890.html").get();
-                    Log.v(LOG_TAG, articleURL);
-                    if (android.os.Build.VERSION.SDK_INT >= 10) {
-                        StrictMode.ThreadPolicy tp = StrictMode.ThreadPolicy.LAX; StrictMode.setThreadPolicy(tp);
-                    }
-                    Document doc = Jsoup.connect(articleURL).ignoreContentType(true).get();
-
-                    for (Element el : doc.select("body").select("*")) {
-                        for (TextNode node : el.textNodes()) {
-                            articleStr.append(node.text());
-                        }
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                WordCloud wc = new WordCloud(articleStr.toString());
+                WordCloud wc = new WordCloud(articleStr);
                 Spannable span = new SpannableString(wc.words());
                 //span.setSpan(new RelativeSizeSpan(3f), 0, 10, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 for(String key: wc.myWC.keySet()){
                     double[] info = wc.myWC.get(key);
-                    span.setSpan(new RelativeSizeSpan((float) info[0]), (int) info[1],(int) info[2],Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    span.setSpan(new RelativeSizeSpan((float) info[0]), (int) info[1],(int) info[2], Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
                 ((TextView) rootView.findViewById(R.id.wordcloud_text))
                         .setText(span);
@@ -129,5 +120,6 @@ public class WordCloudActivity extends AppCompatActivity {
 
             return rootView;
         }
+
     }
 }

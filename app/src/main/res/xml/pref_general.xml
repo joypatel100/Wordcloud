@@ -25,4 +25,11 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
+    <EditTextPreference
+        android:title="@string/pref_search_query"
+        android:key="search_query"
+        android:defaultValue='""'
+        android:inputType="text"
+        android:singleLine="true" />
+
 </PreferenceScreen>

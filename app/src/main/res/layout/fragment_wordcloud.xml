@@ -12,15 +12,16 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/wordcloud_text"
-        android:textColor="@color/red"/>
-
+        android:layout_marginTop="20dp"
+        android:id="@+id/wordcloud_link"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16dp"
-        android:layout_marginTop="20dp"
-        android:id="@+id/wordcloud_link"/>
+        android:id="@+id/wordcloud_text"
+        android:textColor="@color/red"/>
+
+
 
 </LinearLayout>

@@ -3,8 +3,10 @@ package com.project.android.wordcloud;
 import android.annotation.TargetApi;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -29,14 +31,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //myAF = (ArticleFragment) fm.findFragmentByTag(ARTICLE_FRAGMENT);
-        myAF = new ArticleFragment();
-        myAF.setRetainInstance(true);
-        if(savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container,myAF)
-                    .commit();
-        }
-
         if(badWords==null) {
             badWords = new HashSet<>();
             try {
@@ -55,6 +49,16 @@ public class MainActivity extends AppCompatActivity {
                 //You'll need to add proper error handling here
                 Log.v(LOG_TAG, "didn't load bad words");
             }
+        }
+        myAF = new ArticleFragment();
+        myAF.setRetainInstance(true);
+        if(savedInstanceState == null){
+            Log.v(LOG_TAG,"saved instance main null");
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            prefs.edit().putString("search_query","").apply();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container,myAF)
+                    .commit();
         }
     }
 
@@ -97,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void doPositiveClick(String input) {
         // Do stuff here.
-        myAF.updateArticle(input,myAF.lastLanguage);
+        myAF.updateArticle(input, myAF.lastLanguage);
     }
 
     public void doNegativeClick() {
@@ -105,14 +109,16 @@ public class MainActivity extends AppCompatActivity {
         Log.i("FragmentAlertDialog", "Negative click!");
     }
 
+
     @Override
     public void onResume(){
         super.onResume();
+        /*
         String language = Utility.getPreferredLanguage(this);
         Log.v(LOG_TAG, language);
         if(!language.equals(myAF.lastLanguage)) {
             myAF.updateArticle(myAF.lastSearch, language);
-        }
+        }*/
 
     }
 

@@ -5,8 +5,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,9 +48,9 @@ public class SearchDialogFragment extends DialogFragment {
                                 EditText pin = (EditText) v.findViewById(R.id.insert_pin);
                                 String input = pin.getText().toString();
                                 Log.v(LOG_TAG, input);
+                                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                                prefs.edit().putString("search_query",input).apply();
                                 ((MainActivity) getActivity()).doPositiveClick(input);
-
-
                             }
                         }
                 )
