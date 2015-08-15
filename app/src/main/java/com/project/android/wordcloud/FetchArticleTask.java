@@ -32,6 +32,8 @@ public class FetchArticleTask extends AsyncTask<String, Void, Void> {
 
     private final String LOG_TAG = FetchArticleTask.class.getSimpleName();
     private final Context mContext;
+    private String topURL;
+    private String topWords;
 
     public FetchArticleTask(Context context){
         this.mContext = context;
@@ -83,10 +85,12 @@ public class FetchArticleTask extends AsyncTask<String, Void, Void> {
             while (numArticles != ind_res) {
                 Log.v(LOG_TAG, Integer.toString(ind_json));
                 JSONObject article = articleArray.getJSONObject(ind_json);
+                String url = "";
+                StringBuilder words = new StringBuilder();
                 if (article.has(TITLE)) {
                     String title = article.getString(TITLE);
-                    String url = article.getString(ARTICLE_URL);
-                    StringBuilder words = getWordsFromArticleURL(url);
+                    url = article.getString(ARTICLE_URL);
+                    words = getWordsFromArticleURL(url);
                     //resultStrs.add(title);
                     //mArticleURL.put(title, url);
                     ContentValues articleValues = new ContentValues();
@@ -98,6 +102,8 @@ public class FetchArticleTask extends AsyncTask<String, Void, Void> {
                     cvv.add(articleValues);
                     ind_res++;
                 }
+                topURL = url;
+                topWords = words.toString();
                 ind_json++;
             }
             int inserted = 0;
@@ -204,4 +210,11 @@ public class FetchArticleTask extends AsyncTask<String, Void, Void> {
         return null;
     }
 
+    @Override
+    protected void onPostExecute(Void v){
+        //Intent intent = new Intent(mContext, WordCloudActivity.class).putExtra("words",topWords)
+        //            .putExtra("url",topURL);
+        //mContext.startActivity(intent);
+
+    }
 }

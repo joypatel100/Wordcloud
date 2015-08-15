@@ -1,7 +1,6 @@
 package com.project.android.wordcloud;
 
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,6 +34,7 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
     public String lastSearch = "";
     public String lastLanguage = "en";
     private static final int ARTICLE_LOADER = 0;
+    private View rootView;
 
     private static final String[] ARTICLE_COLUMNS = {
             ArticleContract.ArticleEntry.TABLE_NAME + "." + ArticleContract.ArticleEntry._ID,
@@ -58,6 +58,14 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
 
     public ArticleFragment() {
     }
+
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(String url, String words);
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,7 +105,7 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
                              Bundle savedInstanceState) {
 
         mArticleAdapter = new ArticleAdapter(getActivity(), null, 0);
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_article);
         listView.setAdapter(mArticleAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -112,11 +120,13 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
                     Uri uri = ArticleContract.ArticleEntry.buildArticleUriFromName(cursor.getString(COL_ARTICLE_NAME));
                     String url = cursor.getString(COL_ARTICLE_URL);
                     String words = cursor.getString(COL_ARTICLE_WORDS);
-                    Intent intent = new Intent(getActivity(), WordCloudActivity.class).putExtra("words",words)
-                            .putExtra("url",url);
+                    //Intent intent = new Intent(getActivity(), WordCloudActivity.class).putExtra("words",words).putExtra("url", url);
                             //.setData(uri);
-
-                    startActivity(intent);
+                    //getFragmentManager().beginTransaction()
+                            //.replace(R.id.wordcloud_container, new WordCloudActivity.WordCloudFragment())
+                            //.commit();
+                    //startActivity(intent);
+                    ((Callback) getActivity()).onItemSelected(url,words);
                 }
             }
         });
@@ -124,11 +134,13 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     public void updateArticle(String search, String language ){
+        Log.v(LOG_TAG,"update article");
         lastSearch = Utility.getPreferredSearch(getActivity());
         lastLanguage = language;
         Log.v(LOG_TAG, lastSearch);
         FetchArticleTask articleTask = new FetchArticleTask(getActivity());
         articleTask.execute(search,lastLanguage);
+
     }
 
     @Override

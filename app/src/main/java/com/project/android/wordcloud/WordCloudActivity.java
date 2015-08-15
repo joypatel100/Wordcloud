@@ -1,34 +1,23 @@
 package com.project.android.wordcloud;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.style.RelativeSizeSpan;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ShareActionProvider;
-import android.widget.TextView;
-
-import com.project.android.wordcloud.data.ArticleContract;
 
 /**
  * Created by Joy on 8/11/15.
  */
 public class WordCloudActivity extends AppCompatActivity {
 
+    private final String LOG_TAG = WordCloudActivity.class.getSimpleName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wordcloud);
         if (savedInstanceState == null) {
+            Log.v(LOG_TAG,"on create Word Cloud Activity");
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.wordcloud_container, new WordCloudFragment())
                     .commit();
@@ -63,6 +52,7 @@ public class WordCloudActivity extends AppCompatActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
+    /**
     public static class WordCloudFragment extends Fragment {
         private final String LOG_TAG = WordCloudFragment.class.getSimpleName();
         private static final String ARTICLE_SHARE_HASHTAG = " #Wordcloud";
@@ -95,10 +85,10 @@ public class WordCloudActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            Log.v(LOG_TAG,"One create view WordCloud Fragment");
             View rootView = inflater.inflate(R.layout.fragment_wordcloud, container, false);
             Intent intent = getActivity().getIntent();
-            if (intent != null && intent.hasExtra("words")) {
-                //StringBuilder articleStr = new StringBuilder();
+            if (intent != null && intent.hasExtra("words") && intent.hasExtra("url")) {
                 String articleURL = intent.getStringExtra("url");
                 String articleStr = intent.getStringExtra("words");
 
@@ -121,5 +111,5 @@ public class WordCloudActivity extends AppCompatActivity {
             return rootView;
         }
 
-    }
+    }*/
 }

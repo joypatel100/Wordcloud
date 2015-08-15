@@ -19,14 +19,14 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ArticleFragment.Callback{
 
     public ArticleFragment myAF;
     public static HashSet<String> badWords;
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String ARTICLE_FRAGMENT = "ArticleFragment";
     private static final String WCFRAGMENT_TAG = "WCTAG";
-    private boolean mTwoPane;
+    public static boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 prefs.edit().putString("search_query", "").apply();
                 //getSupportFragmentManager().beginTransaction().add(R.id.article_fragment, myAF).commit();
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.wordcloud_container, new WordCloudActivity.WordCloudFragment(),WCFRAGMENT_TAG)
+                        .replace(R.id.wordcloud_container, new WordCloudFragment(),WCFRAGMENT_TAG)
                         .commit();
             }
         }
@@ -133,4 +133,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onItemSelected(String url, String words) {
+        if(mTwoPane){
+            Bundle b = new Bundle();
+            b.putString("url",url);
+            b.putString("words", words);
+            WordCloudFragment wcf = new WordCloudFragment();
+            wcf.setArguments(b);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.wordcloud_container,wcf,WCFRAGMENT_TAG)
+                    .commit();
+        }
+        else{
+            Intent intent = new Intent(this, WordCloudActivity.class).putExtra("words",words).putExtra("url", url);
+            startActivity(intent);
+        }
+    }
 }
