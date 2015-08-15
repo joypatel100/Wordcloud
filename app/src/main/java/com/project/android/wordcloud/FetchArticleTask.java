@@ -1,5 +1,6 @@
 package com.project.android.wordcloud;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
@@ -32,15 +33,25 @@ public class FetchArticleTask extends AsyncTask<String, Void, Void> {
 
     private final String LOG_TAG = FetchArticleTask.class.getSimpleName();
     private final Context mContext;
-    private String topURL;
-    private String topWords;
+    private ProgressDialog dialog; // dialogue box
 
     public FetchArticleTask(Context context){
         this.mContext = context;
+        if(MainActivity.queryChanged) {
+            this.dialog = new ProgressDialog(context);
+            dialog.setCancelable(false);
+        }
     }
 
-    private boolean DEBUG = true;
+    protected void onPreExecute(){
+        if(MainActivity.queryChanged) {
+            dialog.setMessage("Getting articles. Please wait.");
+            dialog.show();
+        }
+    }
 
+
+    // Helper method to get words from webpage from a url link
     private StringBuilder getWordsFromArticleURL(String url){
         StringBuilder articleStr = new StringBuilder();
         try {
@@ -55,18 +66,14 @@ public class FetchArticleTask extends AsyncTask<String, Void, Void> {
                     articleStr.append(node.text());
                     lines++;
                 }
-                if(lines > 1000){
-                    Log.v(LOG_TAG,"LINES GREATER THAN 1000");
-                    break;
-                }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
         return articleStr;
     }
 
+    // Parses JSON Strings
     private void getInformationFromJson(String articleJsonStr, int numArticles,String search)
             throws JSONException {
 
@@ -85,12 +92,10 @@ public class FetchArticleTask extends AsyncTask<String, Void, Void> {
             while (numArticles != ind_res) {
                 Log.v(LOG_TAG, Integer.toString(ind_json));
                 JSONObject article = articleArray.getJSONObject(ind_json);
-                String url = "";
-                StringBuilder words = new StringBuilder();
                 if (article.has(TITLE)) {
                     String title = article.getString(TITLE);
-                    url = article.getString(ARTICLE_URL);
-                    words = getWordsFromArticleURL(url);
+                    String url = article.getString(ARTICLE_URL);
+                    StringBuilder words = getWordsFromArticleURL(url);
                     //resultStrs.add(title);
                     //mArticleURL.put(title, url);
                     ContentValues articleValues = new ContentValues();
@@ -102,8 +107,6 @@ public class FetchArticleTask extends AsyncTask<String, Void, Void> {
                     cvv.add(articleValues);
                     ind_res++;
                 }
-                topURL = url;
-                topWords = words.toString();
                 ind_json++;
             }
             int inserted = 0;
@@ -123,87 +126,87 @@ public class FetchArticleTask extends AsyncTask<String, Void, Void> {
 
     @Override
     protected Void doInBackground(String... params) {
-        //Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
-        String articleJsonStr = null;
+        // Makes call to Faroo API and parses JSON information
+        if(MainActivity.queryChanged) {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            String articleJsonStr = null;
 
-        String key = "8np7pfcewGev6KGJuUcef-1CAC4_";
-        String search = params[0];
-        String source = "web";
-        String format = "json";
-        String language = params[1];
+            String key = "8np7pfcewGev6KGJuUcef-1CAC4_";
+            String search = params[0];
+            String source = "web";
+            String format = "json";
+            String language = "en";
 
-        int numArticles = 10;
+            int numArticles = 10;
 
-        try{
-            final String ARTICLE_BASE_URL = "http://www.faroo.com/api?start=1&length=10&l=en";
-            final String SEARCH_PARAM = "q";
-            final String SOURCE_PARAM = "src";
-            final String FORMAT_PARAM = "f";
-            final String KEY_PARAM = "key";
-            final String LANGUAGE_PARAM = "l";
+            try {
+                final String ARTICLE_BASE_URL = "http://www.faroo.com/api?start=1&length=10&l=en";
+                final String SEARCH_PARAM = "q";
+                final String SOURCE_PARAM = "src";
+                final String FORMAT_PARAM = "f";
+                final String KEY_PARAM = "key";
+                final String LANGUAGE_PARAM = "l";
 
 
-            //URL url = new URL("http://www.faroo.com/api?q=&start=1&length=10&l=en&src=news&f=json&key=8np7pfcewGev6KGJuUcef-1CAC4_");
-            Uri builtUri = Uri.parse(ARTICLE_BASE_URL).buildUpon()
-                    .appendQueryParameter(SEARCH_PARAM, search)
-                    .appendQueryParameter(LANGUAGE_PARAM,language)
-                    .appendQueryParameter(SOURCE_PARAM, source)
-                    .appendQueryParameter(FORMAT_PARAM, format)
-                    .appendQueryParameter(KEY_PARAM, key)
-                    .build();
+                //URL url = new URL("http://www.faroo.com/api?q=&start=1&length=10&l=en&src=news&f=json&key=8np7pfcewGev6KGJuUcef-1CAC4_");
+                Uri builtUri = Uri.parse(ARTICLE_BASE_URL).buildUpon()
+                        .appendQueryParameter(SEARCH_PARAM, search)
+                        .appendQueryParameter(LANGUAGE_PARAM, language)
+                        .appendQueryParameter(SOURCE_PARAM, source)
+                        .appendQueryParameter(FORMAT_PARAM, format)
+                        .appendQueryParameter(KEY_PARAM, key)
+                        .build();
 
-            URL url = new URL(builtUri.toString());
+                URL url = new URL(builtUri.toString());
 
-            Log.v ("USER_AGENT", System.getProperty("http.agent")); //Dalvik/2.1.0
-            Log.v(LOG_TAG, "Built URI " + builtUri.toString());
+                Log.v("USER_AGENT", System.getProperty("http.agent")); //Dalvik/2.1.0
+                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
 
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
 
-            InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
-            if (inputStream == null) {
-                // Nothing to do.
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                articleJsonStr = buffer.toString();
+                getInformationFromJson(articleJsonStr, numArticles, search);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                // If the code didn't successfully get the weather data, there's no point in attemping
+                // to parse it.
                 return null;
-            }
-            reader = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                // But it does make debugging a *lot* easier if you print out the completed
-                // buffer for debugging.
-                buffer.append(line + "\n");
-            }
-
-            if (buffer.length() == 0) {
-                // Stream was empty.  No point in parsing.
-                return null;
-            }
-            articleJsonStr = buffer.toString();
-            getInformationFromJson(articleJsonStr, numArticles,search);
-        }catch (IOException e){
-            Log.e(LOG_TAG, "Error ", e);
-            // If the code didn't successfully get the weather data, there's no point in attemping
-            // to parse it.
-            return null;
-        }
-        catch (JSONException e){
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
-        }
-        finally{
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
                 }
             }
         }
@@ -212,9 +215,10 @@ public class FetchArticleTask extends AsyncTask<String, Void, Void> {
 
     @Override
     protected void onPostExecute(Void v){
-        //Intent intent = new Intent(mContext, WordCloudActivity.class).putExtra("words",topWords)
-        //            .putExtra("url",topURL);
-        //mContext.startActivity(intent);
+        if(MainActivity.queryChanged && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+        MainActivity.queryChanged = false;
 
     }
 }

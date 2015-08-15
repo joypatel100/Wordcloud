@@ -11,6 +11,8 @@ import com.project.android.wordcloud.data.ArticleContract.ArticleEntry;
  */
 public class ArticleDbHelper extends SQLiteOpenHelper {
 
+    // Creates Database
+
     private static final int DATABASE_VERSION = 4;
     static final String DATABASE_NAME = "wordcloud.db";
 

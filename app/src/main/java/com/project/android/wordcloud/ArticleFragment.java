@@ -20,8 +20,6 @@ import android.widget.ListView;
 
 import com.project.android.wordcloud.data.ArticleContract;
 
-import java.util.HashMap;
-
 
 /**
  * A placeholder fragment containing a simple view.
@@ -30,9 +28,7 @@ import java.util.HashMap;
 @TargetApi(11)
 public class ArticleFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private ArticleAdapter mArticleAdapter;
-    HashMap<String,String> mArticleURL;
     public String lastSearch = "";
-    public String lastLanguage = "en";
     private static final int ARTICLE_LOADER = 0;
     private View rootView;
 
@@ -45,8 +41,7 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
             ArticleContract.ArticleEntry.COLUMN_ARTICLE_WORDS
     };
 
-    // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
-    // must change.
+    // These indices are tied to ARTICLE_COLUMNS.
     static final int COL_ARTICLE_ID = 0;
     static final int COL_ARTICLE_SEARCH_QUERY = 1;
     static final int COL_ARTICLE_DATE = 2;
@@ -94,7 +89,7 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            updateArticle(lastSearch,lastLanguage);
+            updateArticle();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -106,8 +101,10 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
 
         mArticleAdapter = new ArticleAdapter(getActivity(), null, 0);
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_article);
+        final ListView listView = (ListView) rootView.findViewById(R.id.listview_article);
         listView.setAdapter(mArticleAdapter);
+
+        // Click listener makes call to main activity which then calls word cloud activity / fragment
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -116,16 +113,8 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 Log.v(LOG_TAG,cursor.getString(COL_ARTICLE_NAME));
                 if (cursor != null) {
-                    String search = Utility.getPreferredSearch(getActivity());
-                    Uri uri = ArticleContract.ArticleEntry.buildArticleUriFromName(cursor.getString(COL_ARTICLE_NAME));
                     String url = cursor.getString(COL_ARTICLE_URL);
                     String words = cursor.getString(COL_ARTICLE_WORDS);
-                    //Intent intent = new Intent(getActivity(), WordCloudActivity.class).putExtra("words",words).putExtra("url", url);
-                            //.setData(uri);
-                    //getFragmentManager().beginTransaction()
-                            //.replace(R.id.wordcloud_container, new WordCloudActivity.WordCloudFragment())
-                            //.commit();
-                    //startActivity(intent);
                     ((Callback) getActivity()).onItemSelected(url,words);
                 }
             }
@@ -133,33 +122,34 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
         return rootView;
     }
 
-    public void updateArticle(String search, String language ){
+    // Update articles with new search query
+    public void updateArticle(){
         Log.v(LOG_TAG,"update article");
-        lastSearch = Utility.getPreferredSearch(getActivity());
-        lastLanguage = language;
+        lastSearch = Utility.getPreferredSearch(getActivity()).toLowerCase();
+        // Checks if query actually changed
+        if(!MainActivity.lastQuery.equals(lastSearch)){
+            MainActivity.lastQuery = lastSearch;
+            MainActivity.queryChanged = true;
+        }
         Log.v(LOG_TAG, lastSearch);
-        FetchArticleTask articleTask = new FetchArticleTask(getActivity());
-        articleTask.execute(search,lastLanguage);
 
+        FetchArticleTask articleTask = new FetchArticleTask(getActivity());
+        articleTask.execute(lastSearch);
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        updateArticle(lastSearch,lastLanguage);
+        updateArticle();
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri uri = ArticleContract.ArticleEntry.buildArticleUriFromSearch(lastSearch);
-        String sortOrder = ArticleContract.ArticleEntry.COLUMN_DATE + " DESC";
-        String selection = ArticleContract.ArticleEntry.COLUMN_SEARCH_QUERY
-                + " = ?";
+        String sortOrder = ArticleContract.ArticleEntry.COLUMN_DATE + " DESC"; // sort on date descending
         return new CursorLoader(getActivity(),
                 uri,
                 ARTICLE_COLUMNS,
-                //selection,
-                //new String[]{lastSearch},
                 null,null,
                 sortOrder);
     }

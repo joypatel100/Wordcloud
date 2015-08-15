@@ -12,6 +12,8 @@ import java.util.HashMap;
  */
 public class WordCloud {
 
+    // Generate Actual Word Cloud from Input String
+
     public HashMap<String,double[]> myWC;
 
     public WordCloud(String text){
@@ -36,25 +38,6 @@ public class WordCloud {
             myWC.put(tag.getName(),info);
             ind += tag.getName().length() + 1;
         }
-        //StringBuilder html = new StringBuild
-        // er();
-
-        /*
-        int lineCount = 0;
-
-        for(Tag tag: cloud.tags()){
-            //System.out.println(t.getName());
-            html.append("<a><font size=" + tag.getWeight() +
-                    "px>" + tag.getName() + "&nbsp</font></a>");
-
-            lineCount++;
-            if(lineCount%10==0){
-                lineCount = 0;
-                html.append("<br />");
-            }
-        }
-        myWC = html.toString();
-        */
     }
 
     public String words(){

@@ -15,12 +15,15 @@ import com.project.android.wordcloud.data.ArticleContract.ArticleEntry;
  * Created by Joy on 8/14/15.
  */
 public class ArticleProvider extends ContentProvider {
+
+    // Content Provider for Article Information
+
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private ArticleDbHelper mOpenHelper;
     private final String LOG_TAG = ArticleProvider.class.getSimpleName();
 
-    static final int ARTICLE = 100;
-    static final int ARTICLE_NAME = 101;
+    static final int ARTICLE = 100; // Query by article information
+    static final int ARTICLE_NAME = 101; // Query by article name
 
     private static final SQLiteQueryBuilder sArticleQueryBuilder;
 

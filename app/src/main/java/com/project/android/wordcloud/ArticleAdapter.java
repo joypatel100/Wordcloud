@@ -17,10 +17,13 @@ import com.project.android.wordcloud.data.ArticleContract;
 @TargetApi(11)
 public class ArticleAdapter extends CursorAdapter {
 
+    // Adapter for Article Information
+
     public ArticleAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
 
+    // Gets name of article to display
     private String convertCursorRowToUXFormat(Cursor cursor){
         int name_ind = cursor.getColumnIndex(ArticleContract.ArticleEntry.COLUMN_ARTICLE_NAME);
         return cursor.getString(name_ind);

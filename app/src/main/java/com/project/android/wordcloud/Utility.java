@@ -8,19 +8,19 @@ import android.preference.PreferenceManager;
  * Created by Joy on 8/13/15.
  */
 public class Utility {
+
+    // Get changes in Preferences for Search Query and Text Color
+
     public static String getPreferredSearch(Context context){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString("search_query", "");
     }
 
-    public static String getPreferredLanguage(Context context) {
+    public static String getWCTextColor(Context context){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString("language_list", "en");
+        return prefs.getString("color_text","#990000");
     }
 
-    public static String getPreferredNumberOfArticles(Context context){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString("article_num","10");
-    }
+
 
 }

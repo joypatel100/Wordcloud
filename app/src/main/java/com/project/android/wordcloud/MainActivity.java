@@ -21,17 +21,21 @@ import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity implements ArticleFragment.Callback{
 
-    public ArticleFragment myAF;
     public static HashSet<String> badWords;
+    public static String wordCloudColor = "#990000";
     private final String LOG_TAG = MainActivity.class.getSimpleName();
-    private static final String ARTICLE_FRAGMENT = "ArticleFragment";
     private static final String WCFRAGMENT_TAG = "WCTAG";
     public static boolean mTwoPane;
+    private String selectedURL = "";
+    private String selectedWords = "";
+    public static boolean queryChanged = true;
+    public static String lastQuery = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Words to be ignored in making word cloud
         if(badWords==null) {
             badWords = new HashSet<>();
             try {
@@ -46,19 +50,20 @@ public class MainActivity extends AppCompatActivity implements ArticleFragment.C
                 br.close();
                 is.close();
                 inputStreamReader.close();
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                prefs.edit().putString("search_query", "").apply();
+
             } catch (IOException e) {
                 //You'll need to add proper error handling here
                 Log.v(LOG_TAG, "didn't load bad words");
             }
         }
-        //myAF = new ArticleFragment();
-        //myAF.setRetainInstance(true);
+        // Container for word cloud
         if(findViewById(R.id.wordcloud_container) != null) {
             mTwoPane = true;
             if (savedInstanceState == null) {
                 Log.v(LOG_TAG, "saved instance main null");
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                prefs.edit().putString("search_query", "").apply();
                 //getSupportFragmentManager().beginTransaction().add(R.id.article_fragment, myAF).commit();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.wordcloud_container, new WordCloudFragment(),WCFRAGMENT_TAG)
@@ -75,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements ArticleFragment.C
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle("NewsCloud");
         return true;
     }
 
@@ -107,12 +114,9 @@ public class MainActivity extends AppCompatActivity implements ArticleFragment.C
         newFragment.show(getFragmentManager(), "dialog");
     }
 
-    public void doPositiveClick(String input) {
-        // Do stuff here.
-        //myAF.updateArticle(input, myAF.lastLanguage);
+    public void doPositiveClick() {
         ArticleFragment a = (ArticleFragment) getSupportFragmentManager().findFragmentById(R.id.article_fragment);
-        a.updateArticle(input,"en");
-
+        a.updateArticle();
     }
 
     public void doNegativeClick() {
@@ -124,25 +128,29 @@ public class MainActivity extends AppCompatActivity implements ArticleFragment.C
     @Override
     public void onResume(){
         super.onResume();
-        /*
-        String language = Utility.getPreferredLanguage(this);
-        Log.v(LOG_TAG, language);
-        if(!language.equals(myAF.lastLanguage)) {
-            myAF.updateArticle(myAF.lastSearch, language);
-        }*/
+        // Checks if preferences have changed
+        String newColor = Utility.getWCTextColor(this);
+        if(!newColor.equals(wordCloudColor)){
+            wordCloudColor = newColor;
+        }
+        if(!selectedURL.isEmpty()){
+            onItemSelected(selectedURL,selectedWords);
+        }
 
     }
 
     @Override
     public void onItemSelected(String url, String words) {
+        selectedURL = url;
+        selectedWords = words;
         if(mTwoPane){
             Bundle b = new Bundle();
-            b.putString("url",url);
-            b.putString("words", words);
+            b.putString("url",selectedURL);
+            b.putString("words", selectedWords);
             WordCloudFragment wcf = new WordCloudFragment();
             wcf.setArguments(b);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.wordcloud_container,wcf,WCFRAGMENT_TAG)
+                    .replace(R.id.wordcloud_container, wcf, WCFRAGMENT_TAG)
                     .commit();
         }
         else{

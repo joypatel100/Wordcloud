@@ -10,6 +10,7 @@ import android.provider.BaseColumns;
  */
 public class ArticleContract {
 
+    // Contract for Article Data
 
     public static final String CONTENT_AUTHORITY = "com.project.android.wordcloud";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -27,11 +28,12 @@ public class ArticleContract {
 
         public static final String TABLE_NAME = "article";
 
-        public static final String COLUMN_SEARCH_QUERY = "search_query";
-        public static final String COLUMN_DATE = "date";
-        public static final String COLUMN_ARTICLE_NAME = "article_name"; // key into ArticleName table
-        public static final String COLUMN_ARTICLE_URL = "article_url";
-        public static final String COLUMN_ARTICLE_WORDS = "article_words";
+
+        public static final String COLUMN_SEARCH_QUERY = "search_query"; //search query
+        public static final String COLUMN_DATE = "date"; //date article was added
+        public static final String COLUMN_ARTICLE_NAME = "article_name"; // name of article
+        public static final String COLUMN_ARTICLE_URL = "article_url"; // url of article
+        public static final String COLUMN_ARTICLE_WORDS = "article_words"; // words in article
 
         public static Uri buildArticleUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);

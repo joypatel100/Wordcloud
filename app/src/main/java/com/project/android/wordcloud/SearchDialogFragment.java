@@ -19,10 +19,9 @@ import android.widget.EditText;
 
 public class SearchDialogFragment extends DialogFragment {
 
+    // Search Dialogue Fragment Information
 
     private final String LOG_TAG = DialogFragment.class.getSimpleName();
-
-
 
     public static SearchDialogFragment newInstance(int title) {
         SearchDialogFragment frag = new SearchDialogFragment();
@@ -50,7 +49,7 @@ public class SearchDialogFragment extends DialogFragment {
                                 Log.v(LOG_TAG, input);
                                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                                 prefs.edit().putString("search_query",input).apply();
-                                ((MainActivity) getActivity()).doPositiveClick(input);
+                                ((MainActivity) getActivity()).doPositiveClick();
                             }
                         }
                 )

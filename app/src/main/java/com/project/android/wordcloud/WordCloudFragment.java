@@ -1,6 +1,7 @@
 package com.project.android.wordcloud;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -12,38 +13,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
-
-import com.project.android.wordcloud.data.ArticleContract;
 
 /**
  * Created by Joy on 8/15/15.
  */
 public class WordCloudFragment extends Fragment {
+    // Fragment to create Word Cloud and update views
+
     private final String LOG_TAG = WordCloudFragment.class.getSimpleName();
-    private static final String ARTICLE_SHARE_HASHTAG = " #Wordcloud";
-    private ShareActionProvider mShareActionProvider;
-    private String mArticle;
-    private static final int WC_LOADER = 0;
 
-    private static final String[] ARTICLE_COLUMNS = {
-            ArticleContract.ArticleEntry.TABLE_NAME + "." + ArticleContract.ArticleEntry._ID,
-            ArticleContract.ArticleEntry.COLUMN_SEARCH_QUERY,
-            ArticleContract.ArticleEntry.COLUMN_DATE,
-            ArticleContract.ArticleEntry.COLUMN_ARTICLE_NAME,
-            ArticleContract.ArticleEntry.COLUMN_ARTICLE_URL,
-            ArticleContract.ArticleEntry.COLUMN_ARTICLE_WORDS
-    };
-
-    static final int COL_ARTICLE_ID = 0;
-    static final int COL_ARTICLE_SEARCH_QUERY = 1;
-    static final int COL_ARTICLE_DATE = 2;
-    static final int COL_ARTICLE_NAME = 3;
-    static final int COL_ARTICLE_URL = 4;
-    static final int COL_ARTICLE_WORDS = 5;
-
-    private View rootView;
 
     public WordCloudFragment() {
         setHasOptionsMenu(true);
@@ -76,14 +55,16 @@ public class WordCloudFragment extends Fragment {
             double[] info = wc.myWC.get(key);
             span.setSpan(new RelativeSizeSpan((float) info[0]), (int) info[1],(int) info[2], Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
-        ((TextView) rootView.findViewById(R.id.wordcloud_text))
-                .setText(span);
+        TextView wordcloud = (TextView) rootView.findViewById(R.id.wordcloud_text);
+        wordcloud.setText(span);
+        wordcloud.setTextColor(Color.parseColor(MainActivity.wordCloudColor));
         TextView link = (TextView) rootView.findViewById(R.id.wordcloud_link);
         link.setClickable(true);
         link.setMovementMethod(LinkMovementMethod.getInstance());
-        String hyperlink = "<a href=\"" + articleURL + "\"> Article Link </a>";
-        link.setText(Html.fromHtml(hyperlink));
-
+        if(!articleURL.equals("")) {
+            String hyperlink = "<a href=\"" + articleURL + "\"> Article Link </a>";
+            link.setText(Html.fromHtml(hyperlink));
+        }
         return rootView;
     }
 

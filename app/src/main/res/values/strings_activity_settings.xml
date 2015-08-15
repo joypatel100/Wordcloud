@@ -6,28 +6,30 @@
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 
-    <string name="pref_title_article_language">Article Language</string>
-    <string-array name="pref_language_list_titles">
-        <item>English</item>
-        <item>German</item>
-        <item>Chinese</item>
+    <string name="pref_text_color">Cloud Text Color</string>
+    <string-array name="pref_color_titles">
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Green</item>
     </string-array>
-    <string-array name="pref_language_list_values">
-        <item>en</item>
-        <item>de</item>
-        <item>zh</item>
+    <string-array name="pref_color_values">
+        <item>#990000</item>
+        <item>#003399</item>
+        <item>#006600</item>
     </string-array>
 
-    <string name="pref_num_articles">Number of Articles</string>
-    <string-array name="pref_num_articles_titles">
-        <item>10</item>
-        <item>25</item>
-        <item>50</item>
+    <string name="pref_search">Popular Searches</string>
+    <string-array name="pref_search_titles">
+        <item>News</item>
+        <item>Sports</item>
+        <item>Weather</item>
+        <item>Celebrity</item>
     </string-array>
-    <string-array name="pref_num_articles_values">
-        <item>10</item>
-        <item>25</item>
-        <item>50</item>
+    <string-array name="pref_search_values">
+        <item>News</item>
+        <item>Sports</item>
+        <item>Weather</item>
+        <item>Celebrity</item>
     </string-array>
 
 

@@ -16,14 +16,7 @@
 
     <style name="ActionBar.Solid.WordCloud" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="displayOptions">useLogo|showHome</item>
+        <item name="logo">@mipmap/cloud</item>
     </style>
-
-
-    <style name="ArticleListStyle">
-        <!-- Here it's a stub.  In screens of sufficient width, this style includes modifications
-        for two-pane layout -->
-    </style>
-
-
 
 </resources>
