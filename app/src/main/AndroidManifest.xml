@@ -15,7 +15,7 @@
             android:name=".MainActivity"
             android:theme="@style/MainTheme"
             android:label="@string/app_name"
-            android:configChanges="orientation|screenSize">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +25,6 @@
         <activity
             android:name=".WordCloudActivity"
             android:label="@string/title_activity_wordcloud"
-            android:configChanges="orientation|screenSize"
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -33,7 +32,6 @@
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity"
             android:theme="@style/SettingsTheme" />
@@ -43,8 +41,7 @@
         <provider
             android:authorities="com.project.android.wordcloud"
             android:name=".data.ArticleProvider"
-            android:enabled="true"
-            android:exported="true"/>
+            />
     </application>
 
 </manifest>

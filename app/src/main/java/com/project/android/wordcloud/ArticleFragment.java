@@ -30,14 +30,10 @@ import java.util.HashMap;
 
 @TargetApi(11)
 public class ArticleFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    public ArticleAdapter mArticleAdapter;
+    private ArticleAdapter mArticleAdapter;
     HashMap<String,String> mArticleURL;
     public String lastSearch = "";
     public String lastLanguage = "en";
-    final String ARTICLE_ADAPTER = "mArticleAdapter";
-    final String ARTICLE_URL_KEYS = "mArticleURLKeys";
-    final String ARTICLE_URL_VALUES = "mArticleURLValues";
-    final String LAST_SEARCH = "lastSearch";
     private static final int ARTICLE_LOADER = 0;
 
     private static final String[] ARTICLE_COLUMNS = {
@@ -66,6 +62,8 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(LOG_TAG,"article fragment created");
+        setRetainInstance(true);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
     }

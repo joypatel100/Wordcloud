@@ -25,12 +25,13 @@ public class MainActivity extends AppCompatActivity {
     public static HashSet<String> badWords;
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String ARTICLE_FRAGMENT = "ArticleFragment";
+    private static final String WCFRAGMENT_TAG = "WCTAG";
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //myAF = (ArticleFragment) fm.findFragmentByTag(ARTICLE_FRAGMENT);
         if(badWords==null) {
             badWords = new HashSet<>();
             try {
@@ -50,15 +51,22 @@ public class MainActivity extends AppCompatActivity {
                 Log.v(LOG_TAG, "didn't load bad words");
             }
         }
-        myAF = new ArticleFragment();
-        myAF.setRetainInstance(true);
-        if(savedInstanceState == null){
-            Log.v(LOG_TAG,"saved instance main null");
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            prefs.edit().putString("search_query","").apply();
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container,myAF)
-                    .commit();
+        //myAF = new ArticleFragment();
+        //myAF.setRetainInstance(true);
+        if(findViewById(R.id.wordcloud_container) != null) {
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                Log.v(LOG_TAG, "saved instance main null");
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                prefs.edit().putString("search_query", "").apply();
+                //getSupportFragmentManager().beginTransaction().add(R.id.article_fragment, myAF).commit();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.wordcloud_container, new WordCloudActivity.WordCloudFragment(),WCFRAGMENT_TAG)
+                        .commit();
+            }
+        }
+        else{
+            mTwoPane = false;
         }
     }
 
@@ -101,7 +109,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void doPositiveClick(String input) {
         // Do stuff here.
-        myAF.updateArticle(input, myAF.lastLanguage);
+        //myAF.updateArticle(input, myAF.lastLanguage);
+        ArticleFragment a = (ArticleFragment) getSupportFragmentManager().findFragmentById(R.id.article_fragment);
+        a.updateArticle(input,"en");
+
     }
 
     public void doNegativeClick() {
