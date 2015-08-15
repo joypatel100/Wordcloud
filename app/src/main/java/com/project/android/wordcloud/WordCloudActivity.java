@@ -18,6 +18,7 @@ public class WordCloudActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wordcloud);
+        getSupportActionBar().setLogo(R.mipmap.cloud);
         if (savedInstanceState == null) {
             Log.v(LOG_TAG,"on create Word Cloud Activity");
             getSupportFragmentManager().beginTransaction()

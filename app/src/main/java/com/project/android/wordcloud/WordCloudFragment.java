@@ -48,7 +48,9 @@ public class WordCloudFragment extends Fragment {
             articleStr = b.getString("words");
         }
 
-        WordCloud wc = new WordCloud(articleStr);
+        Log.v(LOG_TAG,"about to generate word cloud");
+        WordCloud wc = new WordCloud(articleStr,Utility.getNumWordsCloud(getActivity()));
+        Log.v(LOG_TAG,"generated word cloud");
         Spannable span = new SpannableString(wc.words());
         //span.setSpan(new RelativeSizeSpan(3f), 0, 10, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         for(String key: wc.myWC.keySet()){

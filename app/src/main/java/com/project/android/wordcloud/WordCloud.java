@@ -16,7 +16,7 @@ public class WordCloud {
 
     public HashMap<String,double[]> myWC;
 
-    public WordCloud(String text){
+    public WordCloud(String text, int numWords){
         String[] allWords = text.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");
         StringBuilder sb = new StringBuilder();
         for(String word: allWords){
@@ -28,7 +28,7 @@ public class WordCloud {
         Cloud cloud = new Cloud();
         cloud.setMaxWeight(3);
         cloud.setMinWeight(.5);
-        cloud.setMaxTagsToDisplay(50);
+        cloud.setMaxTagsToDisplay(numWords);
         cloud.setTagCase(Cloud.Case.UPPER);
         cloud.addText(sb.toString());
         int ind = 0;

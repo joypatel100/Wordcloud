@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements ArticleFragment.C
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        getSupportActionBar().setDisplayUseLogoEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setTitle("NewsCloud");
         return true;
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements ArticleFragment.C
         if(!newColor.equals(wordCloudColor)){
             wordCloudColor = newColor;
         }
-        if(!selectedURL.isEmpty()){
+        if(mTwoPane && !selectedURL.isEmpty()){
             onItemSelected(selectedURL,selectedWords);
         }
 
