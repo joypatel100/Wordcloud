@@ -39,7 +39,7 @@ public class FetchArticleTask extends AsyncTask<String, Void, Void> {
         this.mContext = context;
         if(MainActivity.queryChanged) {
             this.dialog = new ProgressDialog(context);
-            dialog.setCancelable(false);
+            //dialog.setCancelable(false);
         }
     }
 

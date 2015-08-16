@@ -1,0 +1,9 @@
+Student Name: Joy Patel
+Date: August 15, 2015
+
+Udacity Final Project Submission
+
+App Name: NewsCloud
+
+Description:
+The purpose of this app is to get current online news articles and make word clouds of these articles for the user.  The user can then decide whether he or she wants to read the articles based on the word cloud.  The user can input a query (by default, a blank query gets the most popular recent news) to search the web for news.  There are also settings for the color of the word cloud, popular search queries, and the number of words in the word cloud.
